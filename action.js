@@ -165,8 +165,7 @@ const waitForStatus = async ({
       throw new StatusError('Unknown status error');
     } catch (e) {
       console.log(
-        `Deployment unavailable or not successful, retrying (attempt ${
-          i + 1
+        `Deployment unavailable or not successful, retrying (attempt ${i + 1
         } / ${iterations})`
       );
       if (e instanceof StatusError) {
@@ -236,14 +235,12 @@ const waitForDeploymentToStart = async ({
       }
 
       console.log(
-        `Could not find any deployments for actor ${actorName}, retrying (attempt ${
-          i + 1
+        `Could not find any deployments for actor ${actorName}, retrying (attempt ${i + 1
         } / ${iterations})`
       );
-    } catch(e) {
+    } catch (e) {
       console.log(
-        `Error while fetching deployments, retrying (attempt ${
-          i + 1
+        `Error while fetching deployments, retrying (attempt ${i + 1
         } / ${iterations})`
       );
 
@@ -257,9 +254,7 @@ const waitForDeploymentToStart = async ({
 };
 
 async function getShaForPullRequest({ octokit, owner, repo, number }) {
-  const PR_NUMBER = github.context.payload.pull_request.number;
-
-  if (!PR_NUMBER) {
+  if (!number) {
     core.setFailed('No pull request number was found');
     return;
   }
@@ -268,7 +263,7 @@ async function getShaForPullRequest({ octokit, owner, repo, number }) {
   const currentPR = await octokit.rest.pulls.get({
     owner,
     repo,
-    pull_number: PR_NUMBER,
+    pull_number: number,
   });
 
   if (currentPR.status !== 200) {
@@ -292,6 +287,7 @@ const run = async () => {
     const MAX_TIMEOUT = Number(core.getInput('max_timeout')) || 60;
     const ALLOW_INACTIVE = Boolean(core.getInput('allow_inactive')) || false;
     const PATH = core.getInput('path') || '/';
+    const PR_NUMBER = core.getInput('pr_number') || (github.context.payload && github.context.payload.pull_request && github.context.payload.pull_request.number);
     const CHECK_INTERVAL_IN_MS =
       (Number(core.getInput('check_interval')) || 2) * 1000;
 
@@ -311,12 +307,12 @@ const run = async () => {
      */
     let sha;
 
-    if (github.context.payload && github.context.payload.pull_request) {
+    if (PR_NUMBER) {
       sha = await getShaForPullRequest({
         octokit,
         owner,
         repo,
-        number: github.context.payload.pull_request.number,
+        number: PR_NUMBER,
       });
     } else if (github.context.sha) {
       sha = github.context.sha;

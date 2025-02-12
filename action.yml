@@ -30,6 +30,9 @@ inputs:
     description: 'The path to check. Defaults to the index of the domain'
     default: '/'
     required: false
+  pr_number:
+    description: 'The PR number. Not needed if triggered from a `pull_request` or `push` event.'
+    required: false
 
 outputs:
   url:
