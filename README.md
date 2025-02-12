@@ -39,6 +39,19 @@ Optional - The [header](https://vercel.com/docs/security/deployment-protection/m
 
 Optional - The URL that tests should run against (eg. `path: "https://vercel.com"`).
 
+### `pr_number`
+
+If running this action from a non `pull_request` event, such as `issue_created`, you can provide the PR number directly. For example:
+
+```yaml
+steps:
+  - uses: patrickedqvist/wait-for-vercel-preview@v1.3.3
+    id: waitFor200
+    with:
+      token: ${{ secrets.GITHUB_TOKEN }}
+      pr_number: ${{ github.event.issue.number }}
+```
+
 ## Outputs
 
 ### `url`
@@ -48,6 +61,10 @@ The vercel deploy preview url that was deployed.
 ### `vercel_jwt`
 
 If accessing a password protected site, the JWT from the login event. This can be passed on to e2e tests, for instance.
+
+### `sha`
+
+The SHA of the commit corresponding to the deployment.
 
 ## Example usage
 
